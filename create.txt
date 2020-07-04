@@ -1,0 +1,316 @@
+/*==============================================================*/
+/* DBMS name:      MySQL 5.0                                    */
+/* Created on:     2020/7/4 10:12:38                            */
+/*==============================================================*/
+
+
+drop table if exists address;
+
+drop table if exists coup;
+
+drop table if exists customer;
+
+drop table if exists discount;
+
+drop table if exists has_coup;
+
+drop table if exists manager;
+
+drop table if exists order_detail;
+
+drop table if exists orders;
+
+drop table if exists product;
+
+drop table if exists product_eval;
+
+drop table if exists product_sort;
+
+drop table if exists rider;
+
+drop table if exists rider_bill;
+
+drop table if exists store;
+
+drop table if exists sum_sent;
+
+/*==============================================================*/
+/* Table: address                                               */
+/*==============================================================*/
+create table address
+(
+   add_no               int not null,
+   cus_no               int,
+   add_province         varchar(20) not null,
+   add_city             varchar(20) not null,
+   add_area             varchar(20) not null,
+   add_add              varchar(20) not null,
+   add_peo              varchar(20) not null,
+   add_phone            varchar(20) not null,
+   primary key (add_no)
+);
+
+/*==============================================================*/
+/* Table: coup                                                  */
+/*==============================================================*/
+create table coup
+(
+   coup_no              int not null,
+   store_no             int,
+   coup_money           float not null,
+   coup_reqcount        int not null,
+   start_date           timestamp not null,
+--    end_date             timestamp not null,
+   primary key (coup_no)
+);
+
+/*==============================================================*/
+/* Table: customer                                              */
+/*==============================================================*/
+create table customer
+(
+   cus_no               int not null,
+   cus_name             varchar(20) not null,
+   cus_sex              smallint not null,
+   cus_pwd              varchar(20) not null,
+   cus_phone            varchar(20) not null,
+   cus_email            varchar(20) not null,
+   cus_city             varchar(20) not null,
+   cus_regdate          timestamp not null,
+   cus_is_member        smallint not null,
+--    cus_memenddate       timestamp,
+   primary key (cus_no)
+);
+
+/*==============================================================*/
+/* Table: discount                                              */
+/*==============================================================*/
+create table discount
+(
+   dis_no               int not null,
+   store_no             int,
+   dis_require          float not null,
+   dis_money            float not null,
+   dis_ifadd            smallint not null,
+   primary key (dis_no)
+);
+
+/*==============================================================*/
+/* Table: has_coup                                              */
+/*==============================================================*/
+create table has_coup
+(
+   cus_no               int not null,
+   store_no             int not null,
+   coup_no              int not null,
+   has_count            int not null,
+   has_enddate          timestamp,
+   primary key (cus_no, store_no, coup_no)
+);
+
+/*==============================================================*/
+/* Table: manager                                               */
+/*==============================================================*/
+create table manager
+(
+   manager_no           int not null,
+   manager_name         varchar(20) not null,
+   manager_pwd          varchar(20) not null,
+   primary key (manager_no)
+);
+
+/*==============================================================*/
+/* Table: order_detail                                          */
+/*==============================================================*/
+create table order_detail
+(
+   pro_no               int not null,
+   order_no             int not null,
+   order_count          int not null,
+   order_price          float not null,
+   order_singledis      float not null,
+   primary key (pro_no, order_no)
+);
+
+/*==============================================================*/
+/* Table: orders                                                */
+/*==============================================================*/
+create table orders
+(
+   order_no             int not null,
+   rider_no             int,
+   dis_no               int,
+   add_no               int,
+   coup_no              int,
+   cus_no               int,
+   store_no             int,
+   original_sum         float not null,
+   final_sum            float not null,
+   order_time           timestamp not null,
+--    arrive_time          timestamp not null,
+   order_state          varchar(20) not null,
+   primary key (order_no)
+);
+
+/*==============================================================*/
+/* Table: product                                               */
+/*==============================================================*/
+create table product
+(
+   pro_no               int not null,
+   store_no             int,
+   prosort_no           int,
+   pro_name             varchar(20) not null,
+   pro_price            float not null,
+   pro_discount         float not null,
+   primary key (pro_no)
+);
+
+/*==============================================================*/
+/* Table: product_eval                                          */
+/*==============================================================*/
+create table product_eval
+(
+   store_no             int not null,
+   cus_no               int not null,
+   pro_no               int not null,
+   eval_content         varchar(50),
+   eval_date            timestamp,
+   eval_level           float,
+   eval_pic             longblob,
+   primary key (store_no, cus_no, pro_no)
+);
+
+/*==============================================================*/
+/* Table: product_sort                                          */
+/*==============================================================*/
+create table product_sort
+(
+   prosort_no           int not null,
+   prosort_name         varchar(20) not null,
+   prosort_count        int not null,
+   primary key (prosort_no)
+);
+
+/*==============================================================*/
+/* Table: rider                                                 */
+/*==============================================================*/
+create table rider
+(
+   rider_no             int not null,
+   rider_name           varchar(20) not null,
+   startdate            timestamp not null,
+   rider_identity       varchar(20) not null,
+   primary key (rider_no)
+);
+
+/*==============================================================*/
+/* Table: rider_bill                                            */
+/*==============================================================*/
+create table rider_bill
+(
+   rider_no             int not null,
+   order_no             int not null,
+   riderbill_date       timestamp not null,
+   riderbill_eval       varchar(50),
+   riderbill_single     float not null,
+   primary key (rider_no, order_no)
+);
+
+/*==============================================================*/
+/* Table: store                                                 */
+/*==============================================================*/
+create table store
+(
+   store_no             int not null,
+   store_name           varchar(20) not null,
+   store_level          float,
+   store_per_avg        float,
+   store_total_count    int not null,
+   primary key (store_no)
+);
+
+/*==============================================================*/
+/* Table: sum_sent                                              */
+/*==============================================================*/
+create table sum_sent
+(
+   coup_no              int not null,
+   cus_no               int not null,
+   store_no             int not null,
+   count_order          int not null,
+   primary key (coup_no, cus_no, store_no)
+);
+
+alter table address add constraint FK_add foreign key (cus_no)
+      references customer (cus_no) on delete restrict on update restrict;
+
+alter table coup add constraint FK_Relationship_13 foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table discount add constraint FK_ownduscount foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table has_coup add constraint FK_has_coup foreign key (cus_no)
+      references customer (cus_no) on delete restrict on update restrict;
+
+alter table has_coup add constraint FK_has_coup2 foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table has_coup add constraint FK_has_coup3 foreign key (coup_no)
+      references coup (coup_no) on delete restrict on update restrict;
+
+alter table order_detail add constraint FK_order_detail foreign key (pro_no)
+      references product (pro_no) on delete restrict on update restrict;
+
+alter table order_detail add constraint FK_order_detail2 foreign key (order_no)
+      references orders (order_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_10 foreign key (coup_no)
+      references coup (coup_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_11 foreign key (add_no)
+      references address (add_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_5 foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_6 foreign key (cus_no)
+      references customer (cus_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_7 foreign key (rider_no)
+      references rider (rider_no) on delete restrict on update restrict;
+
+alter table orders add constraint FK_Relationship_9 foreign key (dis_no)
+      references discount (dis_no) on delete restrict on update restrict;
+
+alter table product add constraint FK_Relationship_12 foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table product add constraint FK_sort foreign key (prosort_no)
+      references product_sort (prosort_no) on delete restrict on update restrict;
+
+alter table product_eval add constraint FK_product_eval foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
+alter table product_eval add constraint FK_product_eval2 foreign key (cus_no)
+      references customer (cus_no) on delete restrict on update restrict;
+
+alter table product_eval add constraint FK_product_eval3 foreign key (pro_no)
+      references product (pro_no) on delete restrict on update restrict;
+
+alter table rider_bill add constraint FK_rider_bill foreign key (rider_no)
+      references rider (rider_no) on delete restrict on update restrict;
+
+alter table rider_bill add constraint FK_rider_bill2 foreign key (order_no)
+      references orders (order_no) on delete restrict on update restrict;
+
+alter table sum_sent add constraint FK_sum_sent foreign key (coup_no)
+      references coup (coup_no) on delete restrict on update restrict;
+
+alter table sum_sent add constraint FK_sum_sent2 foreign key (cus_no)
+      references customer (cus_no) on delete restrict on update restrict;
+
+alter table sum_sent add constraint FK_sum_sent3 foreign key (store_no)
+      references store (store_no) on delete restrict on update restrict;
+
